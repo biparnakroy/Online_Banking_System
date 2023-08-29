@@ -130,13 +130,12 @@ public class AdminServiceImpl implements AdminService{
 	
 	public String approved(String accountId,String isApproved)
 	{
-		//String accountId = netbankingRepository.findByNetbankingId(netbankingId).getAccountId();
 		AccountDetails account=accountDetailsRepository.findByAccountId(accountId);
 		
-		//System.out.println("sd " + account.getAccountId());
-		account.setBalance(1090348);
 		account.setIsApproved(isApproved);
-		//accountDetailsRepository.save(account);
+		
+		accountDetailsRepository.save(account);
+		
 		if(isApproved.equals("Accepted"))
 		{
 			return "Account Register Request Accepted";

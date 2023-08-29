@@ -1,5 +1,6 @@
 package com.batch8grp1.obs.service;
 
+import java.security.SecureRandom;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -7,9 +8,11 @@ import javax.security.auth.login.AccountNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.batch8grp1.obs.dto.SetLoginPasswordDto;
+import com.batch8grp1.obs.dto.TxnPasswordDto;
 import com.batch8grp1.obs.dto.UserDetailsDto;
 import com.batch8grp1.obs.entity.AccountDetails;
 import com.batch8grp1.obs.entity.Netbanking;
@@ -44,13 +47,7 @@ public class UserDetailsServiceImpl implements UserDetailsService{
 		return new CreateAccountResponse(newuser.getAccountId(),newuser.getTitle(),newuser.getFirstName(),newuser.getLastname());
 
 	}
-	//	
-	//	public Netbanking loadUserbyUserId(String netbankingId) throws AccountNotFoundException
-	//	{
-	//		Netbanking user = netbankingRepository.findByNetbankingId(netbankingId);
-	//		return new Netbanking(user.getNetbankingId(),user.getPassword(),new ArrayList<>());
-	//	}
-
+	
 	@Override
 	public String forgotUserId(String accountId, String otp) {
 		String response="";
@@ -118,13 +115,44 @@ public class UserDetailsServiceImpl implements UserDetailsService{
 				try {
 					if(setLoginPasswordDto.getNewLoginPassword().equals(setLoginPasswordDto.getConfirmLoginPassword()))
 					{
-						user.setPassword(setLoginPasswordDto.getNewLoginPassword());
+						BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(10, new SecureRandom());
+						String encodedPassword = bCryptPasswordEncoder.encode(setLoginPasswordDto.getNewLoginPassword());
+						user.setPassword(encodedPassword);
 						netbankingRepository.save(user);
-						response ="New Password Set";
+						response ="New Login Password Set";
 					}
 				}catch(Exception e)
 				{
-					throw new CustomException("Couldn't Set New Password");
+					throw new CustomException("Couldn't Set New Login Password");
+				}
+			}
+		}catch(Exception e)
+		{
+			throw new CustomException("Couldn't Find User");
+		}
+		return response;
+
+	}
+	
+	public String setTxnPassword(TxnPasswordDto TxnPasswordDto)
+	{
+		String response="";
+		Netbanking user=netbankingRepository.findByAccountId(TxnPasswordDto.getAccountId());
+		try {
+			if(user != null)
+			{
+				try {
+					if(TxnPasswordDto.getNewTxnPassword().equals(TxnPasswordDto.getConfirmTxnPassword()))
+					{
+						BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder(10, new SecureRandom());
+						String encodedPassword = bCryptPasswordEncoder.encode(TxnPasswordDto.getNewTxnPassword());
+						user.setPassword(encodedPassword);
+						netbankingRepository.save(user);
+						response ="New Transaction Password Set";
+					}
+				}catch(Exception e)
+				{
+					throw new CustomException("Couldn't Set New Transaction Password");
 				}
 			}
 		}catch(Exception e)

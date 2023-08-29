@@ -20,7 +20,7 @@ import com.batch8grp1.obs.service.TransactionsService;
 
 @RestController
 @CrossOrigin("http://localhost:3000")
-@RequestMapping("/benficiary")
+@RequestMapping("/beneficiary")
 public class BeneficiaryController {
 
 	@Autowired private BeneficiaryService beneficiaryService;
@@ -31,7 +31,7 @@ public class BeneficiaryController {
 			List<Beneficiary> allbenef = beneficiaryService.getBeneficary(netbankingId);
 			if(allbenef.isEmpty())
 			{
-				throw new CustomException("No transactions to Display");
+				throw new CustomException("No beneficiaries to Display");
 			}
 			else return ResponseEntity.ok(allbenef);
 		}

@@ -87,7 +87,7 @@ public class TransactionsController {
 	public ResponseEntity<?> txn(@RequestBody TransferRequestDto transferRequestDto)
 	{
 		TransferResponse transfer = txnService.transfer(transferRequestDto);
-		if(transfer.getMsg()!="Tranaction Successful!")
+		if(transfer.getMsg()!="Transaction Successful!")
 		{
 			throw new CustomException("Something Went Wrong!");
 		}

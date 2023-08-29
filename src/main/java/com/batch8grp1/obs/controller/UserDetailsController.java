@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.batch8grp1.obs.dto.SetLoginPasswordDto;
+import com.batch8grp1.obs.dto.TxnPasswordDto;
 import com.batch8grp1.obs.dto.UserDetailsDto;
 import com.batch8grp1.obs.exceptions.CustomException;
 import com.batch8grp1.obs.payload.response.CreateAccountResponse;
@@ -57,5 +58,12 @@ public class UserDetailsController {
 		return ResponseEntity.ok(response);
 	}
 	
+	@PostMapping("/settxnpassword")
+	public ResponseEntity<?> setTxnPassword(@RequestBody TxnPasswordDto TxnPassword)
+	{
+		String response=userDetailsService.setTxnPassword(TxnPassword);
+		
+		return ResponseEntity.ok(response);
+	}
 
 }

@@ -118,10 +118,10 @@ public class TransactionsServiceImpl implements TransactionsService{
 
 			Transactions txn = new Transactions(transferRequestDto.getTxnType(),LocalDate.now().toString(),LocalDate.now().toString(),accountId,transferRequestDto.getToUserId(),transferRequestDto.getAmount(),transferRequestDto.getRemarks(),false);
 			//txn.setBalance(txn.getBalance()-amount);
-			AccountDetails toaccount =  accountDetailsRepository.findByAccountId(transferRequestDto.getToUserId());
+			//AccountDetails toaccount =  accountDetailsRepository.findByAccountId(transferRequestDto.getToUserId());
 
 			fromaccount.setBalance(fromaccount.getBalance()-transferRequestDto.getAmount());
-			toaccount.setBalance(toaccount.getBalance()+transferRequestDto.getAmount());
+			//toaccount.setBalance(toaccount.getBalance()+transferRequestDto.getAmount());
 
 			txnRepository.save(txn);
 

@@ -1,5 +1,7 @@
 package com.batch8grp1.obs.entity;
 
+import java.util.UUID;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -35,6 +37,7 @@ public class Beneficiary {
 
 	public Beneficiary(String netbankingIdofPayee, String beneficiaryAccountId, String beneficiaryName) {
 		super();
+		this.id=generateUniqueNumericString(7);
 		this.netbankingIdofPayee = netbankingIdofPayee;
 		this.beneficiaryAccountId = beneficiaryAccountId;
 		this.beneficiaryName = beneficiaryName;
@@ -76,5 +79,16 @@ public class Beneficiary {
 		this.beneficiaryName = beneficiaryName;
 	}
 
-	
+	public static String generateUniqueNumericString(int length) {
+        UUID uuid = UUID.randomUUID();
+        String uuidAsString = uuid.toString().replaceAll("-", ""); 
+        String numericString = uuidAsString.replaceAll("[^0-9]", "");
+        if (numericString.length() < length) {
+            numericString = String.format("%0" + length + "d", Long.parseLong(numericString));
+        } else if (numericString.length() > length) {
+            numericString = numericString.substring(0, length);
+        }
+
+        return numericString;
+	}
 }
