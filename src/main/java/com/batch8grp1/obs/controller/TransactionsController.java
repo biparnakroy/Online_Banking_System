@@ -14,9 +14,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.batch8grp1.obs.dto.TransferRequestDto;
+import com.batch8grp1.obs.dto.WithdrawDto;
 import com.batch8grp1.obs.entity.Transactions;
 import com.batch8grp1.obs.exceptions.CustomException;
 import com.batch8grp1.obs.payload.response.TransferResponse;
+import com.batch8grp1.obs.payload.response.WithdrawResponse;
 import com.batch8grp1.obs.service.TransactionsService;
 
 @RestController
@@ -26,17 +28,28 @@ public class TransactionsController {
 	
 	@Autowired private TransactionsService txnService;
 	
-	@GetMapping("/alltxns")
-	public ResponseEntity<?> allTxns()
-	{
-		List<Transactions> alltxns = txnService.getAllTransactions();
-		if(alltxns.isEmpty())
-		{
-			throw new CustomException("No transactions to Display");
-		}
-		else return ResponseEntity.ok(alltxns);
-	}
+//	@GetMapping("/alltxns")
+//	public ResponseEntity<?> allTxns()
+//	{
+//		List<Transactions> alltxns = txnService.getAllTransactions();
+//		if(alltxns.isEmpty())
+//		{
+//			throw new CustomException("No transactions to Display");
+//		}
+//		else return ResponseEntity.ok(alltxns);
+//	}
 
+	@GetMapping("/byaccountid")
+	public ResponseEntity<?> txnByAccountId(@RequestParam String accountId)
+	{
+		List<Transactions> usertxn = txnService.getTxnByAccountId(accountId);
+		if(usertxn.isEmpty())
+		{
+			throw new CustomException("No transactions by the User to Display");
+		}
+		else return ResponseEntity.ok(usertxn);
+	}
+	
 	@GetMapping("/user")
 	public ResponseEntity<?> txnOfUser(@RequestParam String netbankingId)
 	{
@@ -81,10 +94,10 @@ public class TransactionsController {
 		else return ResponseEntity.ok(transfer);
 	}
 	
-	@PostMapping("/withdrawlrequest")
-	public ResponseEntity<?> withdrawRequest(@RequestParam String netbankingId,@RequestParam long amount)
+	@PostMapping("/withdraw")
+	public ResponseEntity<?> withdrawRequest(@RequestBody WithdrawDto withdrawldto)
 	{
-		String response = txnService.withdrawalRequest(netbankingId, amount);
+		WithdrawResponse response = txnService.withdrawalRequest(withdrawldto);
 		return ResponseEntity.ok(response);
 	}
 	

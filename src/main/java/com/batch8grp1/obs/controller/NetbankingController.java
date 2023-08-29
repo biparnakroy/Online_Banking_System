@@ -26,7 +26,7 @@ public class NetbankingController {
 	public ResponseEntity<?> loginNetbanking(@RequestBody LoginDto loginDto)
 	{
 		LoginMessage loginResponse = netbankingService.loginNetbanking(loginDto);
-		if(loginResponse.getMessage() != "Login Successful!")
+		if(loginResponse.getMessage() != "Login Successful")
 		{
 			throw new CustomException(loginResponse.getMessage());
 		}

@@ -14,8 +14,6 @@ import lombok.*;
 @Table(name="AccountDetails")
 public class AccountDetails {
 	
-
-
 	@Id
 	@Column(name="AccountId",nullable=false)
 	private String accountId;
@@ -62,4 +60,14 @@ public class AccountDetails {
 	public void setIsApproved(String isApproved) {
 		this.isApproved = isApproved;
 	}
+	
+
+	public void setAccountId(String accountId) {
+		this.accountId = accountId;
+	}
+
+	public void setCreatedAt(String createdAt) {
+		this.createdAt = createdAt;
+	}
+
 }

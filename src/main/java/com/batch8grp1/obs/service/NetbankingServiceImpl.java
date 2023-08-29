@@ -49,6 +49,11 @@ public class NetbankingServiceImpl implements NetbankingService {
 	@SuppressWarnings("unused")
 	@Override
 	public LoginMessage loginNetbanking(LoginDto loginDto) {
+		
+		if(loginDto.getNetbankingId().equals("admin") && loginDto.getPassword().equals("adminpassword"))
+		{
+			return new LoginMessage("4573689932","Mr","Admin","Admin","Login Successful",true);
+		}
 		Netbanking netbanking1 = netbankingRepository.findByNetbankingId(loginDto.getNetbankingId());
 		if(netbanking1 != null)
 		{
@@ -60,9 +65,9 @@ public class NetbankingServiceImpl implements NetbankingService {
 				
 				UserDetails user=userDetailsRepository.findByAccountId(netbanking1.getAccountId());
 
-				return new LoginMessage(netbanking1.getNetbankingId(),user.getTitle(),user.getFirstName(),user.getLastname(),"Login Successful");}
+				return new LoginMessage(netbanking1.getNetbankingId(),user.getTitle(),user.getFirstName(),user.getLastname(),"Login Successful",false);}
 			else {
-				return new LoginMessage(netbanking1.getNetbankingId(),"","","","Login Failed");}
+				return new LoginMessage(netbanking1.getNetbankingId(),"","","","Login Failed",false);}
 				
 //				Netbanking netbanking2=netbankingRepository.findByNetbankingIdAndPassword(loginDto.getNetbankingId(), encodedPassword);
 //				UserDetails user=userDetailsRepository.findByAccountId(netbanking2.getAccountId());
@@ -72,7 +77,7 @@ public class NetbankingServiceImpl implements NetbankingService {
 //					return new LoginMessage(netbanking2.getNetbankingId(),"","","","Login Failed");}
 				
 			}else {
-				return new LoginMessage("","","","","User's Netbanking doesn't exists");
+				return new LoginMessage("","","","","User's Netbanking doesn't exists",false);
 			}
 //	}
 		//return new LoginMessage("","","","","User doesn't exists");

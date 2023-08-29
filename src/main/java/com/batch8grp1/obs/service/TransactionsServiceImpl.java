@@ -12,10 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.batch8grp1.obs.dto.TransferRequestDto;
+import com.batch8grp1.obs.dto.WithdrawDto;
 import com.batch8grp1.obs.entity.AccountDetails;
 import com.batch8grp1.obs.entity.Transactions;
 import com.batch8grp1.obs.exceptions.CustomException;
 import com.batch8grp1.obs.payload.response.TransferResponse;
+import com.batch8grp1.obs.payload.response.WithdrawResponse;
 import com.batch8grp1.obs.repository.AccountDetailsRepository;
 import com.batch8grp1.obs.repository.NetbankingRepository;
 import com.batch8grp1.obs.repository.TransactionsRepository;
@@ -128,19 +130,22 @@ public class TransactionsServiceImpl implements TransactionsService{
 
 	}
 
-	public String withdrawalRequest(String netbankingId, long amount)
+	public WithdrawResponse withdrawalRequest(WithdrawDto withdrawldto)
 	{
-		String accountId = netbankingRepository.findByNetbankingId(netbankingId).getAccountId();
+		String accountId = netbankingRepository.findByNetbankingId(withdrawldto.getNetbankingId()).getAccountId();
 		AccountDetails txn=accountDetailsRepository.findByAccountId(accountId);
-		if(txn.getBalance() < amount)
+		WithdrawResponse response;
+		if(txn.getBalance() < withdrawldto.getAmount())
 		{
-			throw new CustomException("Insufficient balance to proceed with this withdrawl request");
+			response = new WithdrawResponse("",0,"Withdrawal Request Failed due to Insufficient Balance");
+			//throw new CustomException("Insufficient balance to proceed with this withdrawl request");
 		}
 		else {
-			txn.setBalance(txn.getBalance()-amount);
+			txn.setBalance(txn.getBalance()-withdrawldto.getAmount());
 			String requestno = generateUniqueNumericString(7);
-			return "Withdrawal request raised successfully" + requestno;
+			response = new WithdrawResponse(requestno,withdrawldto.getAmount(),"");
 		}
+		return response;
 	}
 
 	public long getBalance(String accountId)
@@ -160,5 +165,14 @@ public class TransactionsServiceImpl implements TransactionsService{
 		}
 
 		return numericString;
+	}
+
+	@Override
+	public List<Transactions> getTxnByAccountId(String accountId) {
+	
+
+		AccountDetails fromaccount=accountDetailsRepository.findByAccountId(accountId);
+		List<Transactions> txnfromuser = txnRepository.findByFromUserId(accountId);
+		return txnfromuser;
 	}
 }

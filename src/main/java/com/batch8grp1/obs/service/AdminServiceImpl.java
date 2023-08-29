@@ -2,6 +2,7 @@ package com.batch8grp1.obs.service;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.batch8grp1.obs.entity.AccountDetails;
 import com.batch8grp1.obs.entity.Transactions;
+import com.batch8grp1.obs.entity.UserDetails;
 import com.batch8grp1.obs.exceptions.CustomException;
+import com.batch8grp1.obs.payload.response.GetAccountResponse;
 import com.batch8grp1.obs.repository.AccountDetailsRepository;
 import com.batch8grp1.obs.repository.NetbankingRepository;
 import com.batch8grp1.obs.repository.TransactionsRepository;
@@ -23,14 +26,25 @@ public class AdminServiceImpl implements AdminService{
 	@Autowired private AccountDetailsRepository accountDetailsRepository;
 	@Autowired private TransactionsRepository txnRepository;
 
-	public List<AccountDetails> getAllAcc()
+	public List<GetAccountResponse> getAllAcc()
 	{
 		List<AccountDetails> allacc = accountDetailsRepository.findAll();
+		ArrayList<GetAccountResponse> accs = new ArrayList<GetAccountResponse>();
 		if(allacc == null)
 		{
 			throw new CustomException("No accounts to Display!");
+		}else
+		{
+			for(int i=0;i<allacc.size();i++)
+			{
+				UserDetails user = userDetailsRepository.findByAccountId(allacc.get(i).getAccountId());
+				GetAccountResponse accres = new GetAccountResponse(allacc.get(i).getAccountId(),allacc.get(i).getCreatedAt(),allacc.get(i).getIsApproved(),user.getTitle(),user.getFirstName(),user.getLastname());
+				accs.add(accres);
+			}
+			
 		}
-		return allacc;
+		System.out.print(allacc.get(0).getIsApproved());
+		return accs;
 	}
 
 	public List<AccountDetails> getAllAccforApproval()
@@ -40,16 +54,20 @@ public class AdminServiceImpl implements AdminService{
 		{
 			throw new CustomException("No accounts to Display!");
 		}
-		List<AccountDetails> accforapproval = null;
-		
-		for(AccountDetails t : allacc)
-		{
-			if(t.getIsApproved() == null)
+		else {
+			List<AccountDetails> accforapproval = null;
+			
+			for(AccountDetails t : allacc)
 			{
-				accforapproval.add(t);
+				if(t.getIsApproved() == null)
+				{
+					accforapproval.add(t);
+				}
 			}
+			return accforapproval;
 		}
-		return accforapproval;
+		
+		
 	}
 	
 	
@@ -110,11 +128,15 @@ public class AdminServiceImpl implements AdminService{
 
 	}
 	
-	public String approved(String netbankingId,String isApproved)
+	public String approved(String accountId,String isApproved)
 	{
-		String accountId = netbankingRepository.findByNetbankingId(netbankingId).getAccountId().toString();
+		//String accountId = netbankingRepository.findByNetbankingId(netbankingId).getAccountId();
 		AccountDetails account=accountDetailsRepository.findByAccountId(accountId);
+		
+		//System.out.println("sd " + account.getAccountId());
+		account.setBalance(1090348);
 		account.setIsApproved(isApproved);
+		//accountDetailsRepository.save(account);
 		if(isApproved.equals("Accepted"))
 		{
 			return "Account Register Request Accepted";

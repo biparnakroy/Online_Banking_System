@@ -35,7 +35,7 @@ public class UserDetailsServiceImpl implements UserDetailsService{
 
 		userDetailsRepository.save(newuser);
 
-		Netbanking newnetuser = new Netbanking("",newuser.getAccountId(),"","","");
+		Netbanking newnetuser = new Netbanking("",newuser.getAccountId(),"","",null);
 		netbankingRepository.save(newnetuser);
 
 		AccountDetails newaccount = new AccountDetails(newuser.getAccountId(),0,LocalDate.now().toString(),null);
@@ -67,11 +67,14 @@ public class UserDetailsServiceImpl implements UserDetailsService{
 				catch(Exception e)
 				{
 					response = "Wrong Otp";
+          
 					throw new CustomException("Wrong Otp");
 				}
+
 			}
 		}catch(Exception e)
 		{
+			response = "User doesn't exist";
 			throw new CustomException("User doesn't exist");
 		}
 
